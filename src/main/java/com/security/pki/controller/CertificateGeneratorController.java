@@ -1,15 +1,8 @@
 package com.security.pki.controller;
 
-import com.security.pki.dto.CertificateDto;
-import com.security.pki.model.Certificate2;
-import com.security.pki.model.User;
 import com.security.pki.service.CertificateGeneratorService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.KeyPair;
 
 @RestController
 @RequestMapping("/cert")

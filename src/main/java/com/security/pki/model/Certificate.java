@@ -21,7 +21,7 @@ public class Certificate {
     private CertificateStatus status;
     private String signatureAlgorithm;
     private String alias;
-    private List<KeyUsage> keyUsages;
+    private List<String> keyUsages;
     private List<String> extendedKeyUsages;
     
 }

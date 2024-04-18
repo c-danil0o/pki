@@ -1,6 +1,5 @@
 package com.security.pki.service;
 
-import com.security.pki.model.Certificate2;
 import com.security.pki.model.certificateData.Issuer;
 import com.security.pki.model.certificateData.Subject;
 import com.security.pki.model.User;
@@ -22,8 +21,6 @@ import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
