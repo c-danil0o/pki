@@ -25,6 +25,8 @@ public class CertificateGeneratorController {
         return new ResponseEntity<>(certificate, HttpStatus.OK);
     }
 
+    
+
 //    @PostMapping(consumes = "application/json")
 //    public ResponseEntity<CertificateDto> genereteCertificate(@RequestParam Long requestId){
 //

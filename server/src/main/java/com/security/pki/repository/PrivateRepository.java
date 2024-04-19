@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 
 @Repository
 public class PrivateRepository {
-    private String keyFolderPath = "src/main/resources/keys/";
-    private String keyStorePasswords = "src/main/resources/passwords/password.csv";
+    private final String keyFolderPath = "src/main/resources/keys/";
+    private final String keyStorePasswords = "src/main/resources/passwords/password.csv";
 
     public PrivateRepository() {
 

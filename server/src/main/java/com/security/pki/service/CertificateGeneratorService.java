@@ -75,7 +75,8 @@ public class CertificateGeneratorService {
 
     public Certificate generateRootCertificate() {
         try {
-            Certificate cert = new Certificate("123456789", "123456789", "root", "root@gmail.com", LocalDate.now(), LocalDate.now().plusYears(1),
+            String serialNumber = Long.toString(System.currentTimeMillis());
+            Certificate cert = new Certificate(serialNumber, serialNumber, "root", "root@gmail.com", LocalDate.now(), LocalDate.now().plusYears(1),
                     CertificateType.ROOT, CertificateStatus.VALID, "SHA256WithRSAEncryption", "root", new ArrayList<>(), new ArrayList<>());
 
             KeyPair rootKeyPair = generateKeyPair();
@@ -87,7 +88,7 @@ public class CertificateGeneratorService {
             X500Name subjectName = new X500Name(rootSubjectName);
             X509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
                     subjectName,
-                    BigInteger.ONE, // Serial number
+                    new BigInteger(serialNumber), // Serial number
                     startDate,
                     endDate,
                     subjectName, // The issuer is the same as the subject for a self-signed certificate
