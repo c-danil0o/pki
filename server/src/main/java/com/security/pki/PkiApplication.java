@@ -10,6 +10,9 @@ public class PkiApplication {
     public static void main(String[] args) {
         SpringApplication.run(PkiApplication.class, args);
         PrivateRepository repository = new PrivateRepository();
+        while (true){
+
+        }
     }
 
 
