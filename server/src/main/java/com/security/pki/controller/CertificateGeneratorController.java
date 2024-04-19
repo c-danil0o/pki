@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cert")
+@RequestMapping(value = "cert")
 public class CertificateGeneratorController {
     private final CertificateGeneratorService certificateGeneratorService;
 
@@ -19,8 +19,14 @@ public class CertificateGeneratorController {
         this.certificateGeneratorService = certificateGeneratorService;
     }
 
+    @GetMapping(value = "/root")
+    public ResponseEntity<Certificate> generateRootCertificate(){
+        Certificate certificate = this.certificateGeneratorService.generateRootCertificate();
+        return new ResponseEntity<>(certificate, HttpStatus.OK);
+    }
+
 //    @PostMapping(consumes = "application/json")
-//    public ResponseEntity<CertificateDto> GenereteCertificate(@RequestParam Long requestId){
+//    public ResponseEntity<CertificateDto> genereteCertificate(@RequestParam Long requestId){
 //
 //    }
     
