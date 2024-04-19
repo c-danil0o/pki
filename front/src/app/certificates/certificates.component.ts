@@ -4,6 +4,7 @@ import {TreeModule} from 'primeng/tree'
 import {TreeNode} from "primeng/api";
 import {FormatWidth, NgStyle} from "@angular/common";
 import {ButtonModule} from "primeng/button";
+import {CertificateComponent} from "../certificate/certificate.component";
 
 export interface CertificateItem{
   id: string,
@@ -19,6 +20,8 @@ export interface CertificateItem{
     TreeModule,
     NgStyle,
     ButtonModule,
+    CertificateComponent,
+    CertificateComponent,
   ],
   templateUrl: './certificates.component.html',
   styleUrl: './certificates.component.css'

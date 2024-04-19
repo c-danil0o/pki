@@ -7,7 +7,7 @@
 </div>
 <div class="certificates-container">
 
-  <p-splitter [style]="{ height: '300px', backgroundColor: 'black', border: '0px'}" [panelSizes]="[60, 40]">
+  <p-splitter [style]="{  backgroundColor: 'black', border: '0px'}" [panelSizes]="[60, 40]">
     <ng-template pTemplate>
       <div class="col flex align-items-center justify-content-center panel">
         <p-tree [style]="{backgroundColor: 'black'}"  [value]="certificates" class="w-full md:w-30rem" selectionMode="single"
@@ -15,7 +15,12 @@
       </div>
     </ng-template>
     <ng-template pTemplate>
-      <div class="col flex align-items-center justify-content-center">Panel 2</div>
+      <div class="col flex align-items-center justify-content-center certificate-wrapper ">
+        @if (selectedCertificate ){
+
+          <app-certificate [certificateAlias]="selectedCertificate?.key"></app-certificate>
+        }
+      </div>
     </ng-template>
   </p-splitter>
 </div>

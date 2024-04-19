@@ -1,6 +1,9 @@
 export interface Certificate {
-    serialNumber: bigint,
-    issuerName: string,
-    subjectName: string,
-    
+  serialNumber: string,
+  issuerName: string,
+  subjectName: string,
+  subjectEmail: string,
+  validFrom: Date,
+  validTo: Date,
+  type: string,
 }
