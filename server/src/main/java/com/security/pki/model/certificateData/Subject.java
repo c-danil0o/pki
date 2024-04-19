@@ -14,4 +14,8 @@ public class Subject {
 
     private X500Name x500Name;
     private PublicKey publicKey;
+
+    public Subject(X500Name name){
+        x500Name = name;
+    }
 }

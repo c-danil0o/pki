@@ -50,12 +50,12 @@ public class KeyStoreRepository {
 //        return null;
 //    }
 
-    public Certificate readCertificate(String keyStorePass, String alias) {
+    public Certificate readCertificate(String alias, String keyStorePass) {
         try {
             KeyStore ks = KeyStore.getInstance("JKS", "SUN");
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
             ks.load(in, keyStorePass.toCharArray());
-            if (ks.isKeyEntry(alias)) {
+            if (ks.isCertificateEntry(alias)) {
                 Certificate cert = ks.getCertificate(alias);
                 return cert;
             }
