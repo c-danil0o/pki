@@ -4,6 +4,7 @@ import {ButtonModule} from "primeng/button";
 import {Certificate} from "../models/certificate";
 import {BadgeModule} from "primeng/badge";
 import {DatePipe} from "@angular/common";
+import {CertificateService} from "../services/certificate.service";
 
 @Component({
   selector: 'app-certificate',
@@ -20,7 +21,7 @@ import {DatePipe} from "@angular/common";
 export class CertificateComponent {
   certificate: Certificate | null = null;
 
-  constructor() {
+  constructor(private certificateService: CertificateService) {
   }
 
   certificateType: string = "";
@@ -31,16 +32,13 @@ export class CertificateComponent {
       this.fetchCertificate(value);
   }
 
-  fetchCertificate(alias: string) {
-    this.certificate = {
-      serialNumber: "123",
-      issuerName: "Certifikey Co",
-      subjectName: "Booking",
-      subjectEmail: "booking@example.com",
-      validFrom: new Date(Date.now()),
-      validTo: new Date(Date.now() + 1230000000),
-      type: "END ENTITY"
-    }
+  fetchCertificate(serialNumber: string) {
+    this.certificateService.getBySerialNumber(serialNumber).subscribe({
+      next: (data: Certificate) => {
+        this.certificate = data;
+      }
+    })
+
   }
 
 
