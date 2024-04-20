@@ -70,12 +70,12 @@ public class CertificateBuilderUtils {
         builder.addRDN(BCStyle.E, request.getEmail());
         builder.addRDN(BCStyle.UID, request.getAccountId().toString());
         Subject subject = new Subject(builder.build());
-        if (request.getType() == CertificateType.END) {
-            subject.setPublicKey(getPublicKeyFromPem(request.getPublicKey()));
-        } else {
+        if (request.getType() == CertificateType.ROOT || request.getPublicKey() == null) {
             KeyPair keyPair = generateKeyPair();
             subject.setPublicKey(keyPair.getPublic());
             subject.setPrivateKey(keyPair.getPrivate());
+        }else {
+            subject.setPublicKey(getPublicKeyFromPem(request.getPublicKey()));
         }
 
         return subject;
