@@ -41,7 +41,6 @@ public class CertificateGeneratorController {
             this.certificateRequestService.deleteById(requestId);
             return (ResponseEntity.ok(certificate));
         }
-
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
