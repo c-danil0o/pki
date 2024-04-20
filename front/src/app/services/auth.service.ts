@@ -6,7 +6,7 @@ import {BehaviorSubject} from "rxjs";
 })
 export class AuthService {
 
-  user$ = new BehaviorSubject("admin");
+  user$ = new BehaviorSubject("");
   userState = this.user$.asObservable();
   constructor() { }
 
