@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.KeyUsage;
 
 import java.beans.ConstructorProperties;
@@ -53,7 +54,7 @@ public class Certificate {
     public Certificate(X509Certificate x509Certificate, Issuer issuer, Request request){
         this.serialNumber = x509Certificate.getSerialNumber().toString();
         this.issuerSerialNumber = issuer.getCertificate().getSerialNumber().toString();
-        this.issuerName = issuer.getCertificate().getIssuerX500Principal().getName(); // provjeriti
+        this.issuerName = issuer.getX500Name().getRDNs(BCStyle.CN)[0].getFirst().getValue().toString();
         this.subjectEmail = request.getEmail();
         this.validTo = x509Certificate.getNotAfter();
         this.validFrom = x509Certificate.getNotBefore();
@@ -62,7 +63,6 @@ public class Certificate {
         this.signatureAlgorithm = x509Certificate.getSigAlgName();
         this.alias = request.getAlias();
         this.extensions = request.getExtensions();
-        
     }
     
 }
