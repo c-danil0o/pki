@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 
 @Repository
 public class PrivateRepository {
-    private String keyFolderPath = "src/main/resources/keys/";
-    private String keyStorePasswords = "src/main/resources/passwords/password.csv";
+    private final String keyFolderPath = "src/main/resources/keys/";
+    private final String keyStorePasswords = "src/main/resources/passwords/password.csv";
 
     public PrivateRepository() {
 
@@ -99,7 +99,7 @@ public class PrivateRepository {
 
     public void savePassword(String keyStoreName, String password) {
         try {
-            FileWriter outputfile = new FileWriter(keyStorePasswords, true);
+            FileWriter outputfile = new FileWriter(keyStorePasswords); // dodati append ako bude vise fajlova
             CSVWriter writer = new CSVWriter(outputfile);
             String[] data = {keyStoreName, password};
             writer.writeNext(data);
