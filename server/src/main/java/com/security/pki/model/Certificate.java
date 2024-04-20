@@ -1,6 +1,8 @@
 package com.security.pki.model;
 
 
+import com.security.pki.model.certificateData.Issuer;
+import com.security.pki.model.certificateData.Subject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +10,10 @@ import lombok.NoArgsConstructor;
 import org.bouncycastle.asn1.x509.KeyUsage;
 
 import java.beans.ConstructorProperties;
+import java.security.cert.X509Certificate;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -25,9 +30,11 @@ public class Certificate {
     @Column
     private String subjectEmail;
     @Column
-    private LocalDate validFrom;
+    @Temporal(TemporalType.DATE)
+    private Date validFrom;
     @Column
-    private LocalDate validTo;
+    @Temporal(TemporalType.DATE)
+    private Date validTo;
     @Column
     @Enumerated(EnumType.STRING)
     private CertificateType type;
@@ -39,8 +46,22 @@ public class Certificate {
     @Column
     private String alias;
     @ElementCollection
-    private List<String> keyUsages;
-    @ElementCollection
-    private List<String> extendedKeyUsages;
+    private HashMap<String, String> extensions;
+
+    
+    public Certificate(X509Certificate x509Certificate, Issuer issuer, Request request){
+        this.serialNumber = x509Certificate.getSerialNumber().toString();
+        this.issuerSerialNumber = issuer.getCertificate().getSerialNumber().toString();
+        this.issuerName = issuer.getCertificate().getIssuerX500Principal().getName(); // provjeriti
+        this.subjectEmail = request.getEmail();
+        this.validTo = x509Certificate.getNotAfter();
+        this.validFrom = x509Certificate.getNotBefore();
+        this.type = request.getType();
+        this.status = CertificateStatus.VALID;
+        this.signatureAlgorithm = x509Certificate.getSigAlgName();
+        this.alias = request.getAlias();
+        this.extensions = request.getExtensions();
+        
+    }
     
 }

@@ -15,30 +15,46 @@ import java.security.PublicKey;
 
 public class ExtensionsUtils {
 
-    public void addIntermediateExtensions(X509v3CertificateBuilder certBuilder, PublicKey publicKey, ContentSigner contentSigner) {
+    public void addExtension(X509v3CertificateBuilder builder,  String key, String value, PublicKey subjectPublicKey, PublicKey issuerPublicKey){
         try {
-            addBasicConstraintsExtension(certBuilder);
-            addKeyUsageExtension(certBuilder);
-            addSubjectKeyIdentifierExtension(certBuilder, publicKey);
-            addAuthorityKeyIdentifierExtension(certBuilder, publicKey);
-        } catch (IOException | NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error adding intermediate extensions", e);
+            switch (key) {
+                case "basic":
+                    addBasicConstraintsExtension(builder, value);
+                    break;
+                case "subjectKeyIdentifier":
+                    addSubjectKeyIdentifierExtension(builder, subjectPublicKey);
+                    break;
+                case "authorityKeyIdentifier":
+                    addAuthorityKeyIdentifierExtension(builder, issuerPublicKey);
+                    break;
+                case "keyUsage":
+                    addKeyUsageExtensions(builder, value);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void addBasicConstraintsExtension(X509v3CertificateBuilder certBuilder) throws IOException {
+    private void addBasicConstraintsExtension(X509v3CertificateBuilder certBuilder, String value) throws IOException {
+        boolean boolValue = Boolean.parseBoolean(value.toLowerCase());
         certBuilder.addExtension(
                 Extension.basicConstraints,
                 true,
-                new BasicConstraints(true)
+                new BasicConstraints(boolValue)
         );
     }
 
-    private void addKeyUsageExtension(X509v3CertificateBuilder certBuilder) throws IOException {
+    private void addKeyUsageExtensions(X509v3CertificateBuilder certBuilder,String value) throws IOException {
+        int extensions = 0;
+        for (String c : value.split(",")) {
+           extensions = extensions |Integer.valueOf(c.trim());
+        }
         certBuilder.addExtension(
                 Extension.keyUsage,
                 true,
-                new KeyUsage(KeyUsage.keyCertSign | KeyUsage.cRLSign)
+                new KeyUsage(extensions)
         );
     }
 

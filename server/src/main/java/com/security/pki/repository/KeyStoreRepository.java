@@ -16,7 +16,7 @@ import java.security.cert.X509Certificate;
 @Repository
 public class KeyStoreRepository {
     private KeyStore keyStore;
-    private String keyStoreFile = "src/main/resources/keystore/keystore.jks";
+    private String keyStoreFolder = "src/main/resources/keystore/";
 
     public KeyStoreRepository() {
         try {
@@ -50,10 +50,10 @@ public class KeyStoreRepository {
 //        return null;
 //    }
 
-    public Certificate readCertificate(String alias, String keyStorePass) {
+    public Certificate readCertificate(String keyStore, String alias, String keyStorePass) {
         try {
             KeyStore ks = KeyStore.getInstance("JKS", "SUN");
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFolder + keyStore + ".jks"));
             ks.load(in, keyStorePass.toCharArray());
             if (ks.isCertificateEntry(alias)) {
                 Certificate cert = ks.getCertificate(alias);
@@ -79,7 +79,7 @@ public class KeyStoreRepository {
     public void loadKeyStore(String fileName, char[] password) {
         try {
             if (fileName != null) {
-                keyStore.load(new FileInputStream(fileName), password);
+                keyStore.load(new FileInputStream(keyStoreFolder + fileName + ".jks"), password);
             } else {
                 keyStore.load(null, password);
             }
@@ -96,7 +96,7 @@ public class KeyStoreRepository {
 
     public void saveKeyStore(String fileName, char[] password) {
         try {
-            keyStore.store(new FileOutputStream(fileName), password);
+            keyStore.store(new FileOutputStream(keyStoreFolder + fileName + ".jks"), password);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {

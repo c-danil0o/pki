@@ -99,7 +99,7 @@ public class PrivateRepository {
 
     public void savePassword(String keyStoreName, String password) {
         try {
-            FileWriter outputfile = new FileWriter(keyStorePasswords, true);
+            FileWriter outputfile = new FileWriter(keyStorePasswords); // dodati append ako bude vise fajlova
             CSVWriter writer = new CSVWriter(outputfile);
             String[] data = {keyStoreName, password};
             writer.writeNext(data);
