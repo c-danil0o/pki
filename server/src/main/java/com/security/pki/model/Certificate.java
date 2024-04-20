@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -46,7 +47,7 @@ public class Certificate {
     @Column
     private String alias;
     @ElementCollection
-    private HashMap<String, String> extensions;
+    private Map<String, String> extensions;
 
     
     public Certificate(X509Certificate x509Certificate, Issuer issuer, Request request){

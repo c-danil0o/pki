@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -33,10 +34,10 @@ public class Request {
     @Column
     @Temporal(TemporalType.DATE)
     private Date validTo;
-    @Column(nullable = true)
+    @Column(columnDefinition="text")
     private String publicKey;
     @Column
     private CertificateType type;
     @ElementCollection
-    private HashMap<String, String> extensions;
+    private Map<String, String> extensions;
 }

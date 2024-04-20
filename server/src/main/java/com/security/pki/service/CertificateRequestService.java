@@ -24,6 +24,14 @@ public class CertificateRequestService {
         }
     }
 
+    public Request findById(Long id){
+        return requestRepository.findById(id).orElseGet(null);
+    }
+
+    public void deleteById(Long id){
+        this.requestRepository.deleteById(id);
+    }
+
 
 
 }

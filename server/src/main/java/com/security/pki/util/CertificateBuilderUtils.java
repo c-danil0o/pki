@@ -81,10 +81,10 @@ public class CertificateBuilderUtils {
         return subject;
     }
 
-    public Issuer generateIssuer(String alias, PrivateKey key) {
+    public Issuer generateIssuer(String alias, PrivateKey key, CertificateType certificateType) {
         PrivateKey issuerPrivateKey = null;
         X500Name issuerName = null;
-        if (alias.equals("root") && key != null) {
+        if (certificateType.equals(CertificateType.ROOT) && key != null) {                          //ne valja (za intermediate ce da uzme njegov kljuc da je issuerov )
             issuerName = getRootIssuer();
             issuerPrivateKey = key;
             return new Issuer(issuerName, alias, issuerPrivateKey);
@@ -182,7 +182,7 @@ public class CertificateBuilderUtils {
             privateRepository.saveKey(key, alias);
     }
 
-    public X509Certificate addExtensions(X509v3CertificateBuilder builder, HashMap<String, String> extensions, PublicKey subjectPublicKey, PublicKey issuerPublicKey) {
+    public X509Certificate addExtensions(X509v3CertificateBuilder builder, Map<String, String> extensions, PublicKey subjectPublicKey, PublicKey issuerPublicKey) {
         ExtensionsUtils extensionsUtils = new ExtensionsUtils();
         for (Map.Entry<String, String> mapEntry: extensions.entrySet()) {
             extensionsUtils.addExtension(builder, mapEntry.getKey(), mapEntry.getValue(), subjectPublicKey, issuerPublicKey);

@@ -70,7 +70,7 @@ public class CertificateGeneratorService {
 
     public Certificate get(Request request) {
         Subject subject = certificateBuilderUtils.generateSubject(request);
-        Issuer issuer = certificateBuilderUtils.generateIssuer(request.getSignerAlias(), subject.getPrivateKey());
+        Issuer issuer = certificateBuilderUtils.generateIssuer(request.getSignerAlias(), subject.getPrivateKey(), request.getType());
         X509v3CertificateBuilder builder = certificateBuilderUtils.configureCertificateBuilder(subject.getX500Name(),
                 issuer.getX500Name(), new Date(), request.getValidTo(),
                 String.valueOf(System.currentTimeMillis()), subject.getPublicKey());
@@ -81,10 +81,11 @@ public class CertificateGeneratorService {
         if (request.getType().equals(CertificateType.ROOT))
             issuer.setCertificate(certificate);
         certificateBuilderUtils.saveCertificateAndKeys(certificate, request.getAlias(), subject.getPrivateKey(), request.getType());
-        Certificate certificateModel = new Certificate(certificate, issuer, request) ;
-//        certificateRepository.save(certificateModel);
+        Certificate certificateModel = new Certificate(certificate, issuer, request);
+        certificateRepository.save(certificateModel);
         return certificateModel;
     }
+
 
   
 
