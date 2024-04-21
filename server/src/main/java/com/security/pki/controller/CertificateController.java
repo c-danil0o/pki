@@ -4,6 +4,7 @@ import com.security.pki.dto.CertificateDto;
 import com.security.pki.dto.CertificateNodeDto;
 import com.security.pki.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,10 @@ public class CertificateController {
 
     @GetMapping("/alias/{alias}")
     public ResponseEntity<CertificateDto> getByAlias(@PathVariable String alias){
+        CertificateDto certificateDto = this.certificateService.getByAlias(alias);
+        if(certificateDto == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(this.certificateService.getByAlias(alias));
     }
     

@@ -32,7 +32,12 @@ public class CertificateService {
     }
 
     public CertificateDto getByAlias(String alias){
-        return new CertificateDto(this.certificateRepository.findCertificateByAlias(alias));
+        Certificate certificate = this.certificateRepository.findCertificateByAlias(alias);
+        if(certificate != null){
+            return new CertificateDto(this.certificateRepository.findCertificateByAlias(alias));
+        }
+
+        return null;
     }
 
 
