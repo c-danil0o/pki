@@ -28,5 +28,15 @@ public class CertificateController {
     public ResponseEntity<CertificateDto> getBySerialNumber(@PathVariable String serialNumber){
         return ResponseEntity.ok(this.certificateService.getBySerialNumber(serialNumber));
     }
+
+    @GetMapping("/validate/{serialNumber}")
+    public ResponseEntity<Boolean> isValid(@PathVariable String serialNumber){
+        return ResponseEntity.ok(this.certificateService.isValid(serialNumber));
+    }
+
+    @GetMapping("/alias/{alias}")
+    public ResponseEntity<CertificateDto> getByAlias(@PathVariable String alias){
+        return ResponseEntity.ok(this.certificateService.getByAlias(alias));
+    }
     
 }
