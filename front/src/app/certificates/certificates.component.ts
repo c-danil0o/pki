@@ -21,6 +21,8 @@ import {Request} from "../models/Request";
 import {SelectButtonChangeEvent, SelectButtonModule} from "primeng/selectbutton";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {ReturnStatement} from "@angular/compiler";
+import {AuthService} from "../services/auth.service";
+import {Router} from "@angular/router";
 
 export interface CertificateItem {
   id: string,
@@ -55,10 +57,13 @@ export interface CertificateItem {
 
 
 export class CertificatesComponent implements OnInit {
-  constructor(private certificateService: CertificateService, private messageService: MessageService) {
+  constructor(private authService: AuthService, private router: Router, private certificateService: CertificateService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
+    this.authService.userState.subscribe({
+      next: value => {if (value == "") this.router.navigate(['/'])}
+    })
     this.refreshTree()
   }
 
