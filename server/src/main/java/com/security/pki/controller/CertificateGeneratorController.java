@@ -22,6 +22,7 @@ public class CertificateGeneratorController {
         this.certificateRequestService = certificateRequestService;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(consumes = "application/json", path = "/get")
     public ResponseEntity<Certificate> generateCertificate(@RequestBody Request request) {
         return (ResponseEntity.ok(this.certificateGeneratorService.get(request)));

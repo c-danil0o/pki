@@ -10,5 +10,5 @@ export interface Request{
   validFrom: Date;
   publicKey: string;
   type: string;
-  extensions: []
+  extensions: object;
 }
