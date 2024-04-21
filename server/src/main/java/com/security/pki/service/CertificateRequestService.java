@@ -5,6 +5,8 @@ import com.security.pki.repository.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CertificateRequestService {
     private final RequestRepository requestRepository;
@@ -22,6 +24,9 @@ public class CertificateRequestService {
         catch (Exception e){
             return false;
         }
+    }
+    public List<Request> getAll(){
+        return this.requestRepository.findAll();
     }
 
     public Request findById(Long id){

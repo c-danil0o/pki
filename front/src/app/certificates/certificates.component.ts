@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {SplitterModule} from 'primeng/splitter'
 import {TreeModule} from 'primeng/tree'
-import {TreeNode} from "primeng/api";
+import {MessageService, TreeNode} from "primeng/api";
 import {FormatWidth, NgStyle} from "@angular/common";
 import {ButtonModule} from "primeng/button";
 import {CertificateComponent} from "../certificate/certificate.component";
@@ -50,11 +50,12 @@ export interface CertificateItem {
   ],
   templateUrl: './certificates.component.html',
   styleUrl: './certificates.component.css'
+
 })
 
 
 export class CertificatesComponent implements OnInit {
-  constructor(private certificateService: CertificateService) {
+  constructor(private certificateService: CertificateService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -112,6 +113,16 @@ export class CertificatesComponent implements OnInit {
         name: "Intermediate",
         code: "INTERMEDIATE"
       }];
+    }else{
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        key: 'bc',
+        detail: 'Please select certificate!',
+        life: 2000
+      })
+
+
     }
   }
   addRootCertificate(){
@@ -123,6 +134,15 @@ export class CertificatesComponent implements OnInit {
       this.subjectAliasDisabled = true;
       this.rootCertificate = true;
       this.addNewCertificateFormVisible = true;
+    }else{
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        key: 'bc',
+        detail: 'Root already exists!',
+        life: 2000
+      })
+
     }
   }
 
@@ -133,6 +153,15 @@ export class CertificatesComponent implements OnInit {
           window.location.reload();
         }
       })
+    }else{
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        key: 'bc',
+        detail: 'No selected certificate!',
+        life: 2000
+      })
+
     }
   }
 
@@ -334,7 +363,7 @@ export class CertificatesComponent implements OnInit {
 
     if (this.subjectFirstname != "" && this.subjectLastname != "" && this.subjectEmail != "" &&
       this.subjectAlias != "" && this.subjectCountryCode != "" && this.subjectOrganisation != "") {
-      if (this.certificateType != null && this.validFrom != null && this.validTo != null && this.validFrom.getTime() < this.validTo.getTime() && this.validFrom.getTime()+ 3600000 >= new Date().getTime()) {
+      if (this.certificateType != null && this.validFrom != null && this.validTo != null && this.validFrom.getTime() < this.validTo.getTime() && this.validFrom.getTime()+ 86400000 >= new Date().getTime()) {
         let request: Request = {
           firstName: this.subjectFirstname,
           lastName: this.subjectLastname,
