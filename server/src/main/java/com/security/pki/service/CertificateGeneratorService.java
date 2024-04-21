@@ -11,64 +11,35 @@ import com.security.pki.repository.CertificateRepository;
 import com.security.pki.repository.KeyStoreRepository;
 import com.security.pki.repository.PrivateRepository;
 import com.security.pki.util.CertificateBuilderUtils;
-import com.security.pki.util.ExtensionsUtils;
-import jakarta.persistence.EntityNotFoundException;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.X500NameBuilder;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x509.*;
-import org.bouncycastle.cert.CertIOException;
-import org.bouncycastle.cert.X509CertificateHolder;
+import jakarta.annotation.PostConstruct;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.security.*;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class CertificateGeneratorService {
-    private final KeyStoreRepository keyStoreRepository;
-    private final PrivateRepository privateRepository;
     private final CertificateRepository certificateRepository;
     private final CertificateBuilderUtils certificateBuilderUtils;
+    private final TaskScheduler taskScheduler;
+    private static final Logger LOG = Logger.getAnonymousLogger();
 
     @Autowired
-    public CertificateGeneratorService(KeyStoreRepository keyStoreRepository, PrivateRepository privateRepository, CertificateRepository certificateRepository, CertificateBuilderUtils certificateBuilderUtils) {
+    public CertificateGeneratorService(KeyStoreRepository keyStoreRepository, PrivateRepository privateRepository, CertificateRepository certificateRepository, CertificateBuilderUtils certificateBuilderUtils, TaskScheduler taskScheduler) {
         this.certificateRepository = certificateRepository;
         this.certificateBuilderUtils = certificateBuilderUtils;
+        this.taskScheduler = taskScheduler;
         Security.addProvider(new BouncyCastleProvider());
-        this.keyStoreRepository = keyStoreRepository;
-        this.privateRepository = privateRepository;
     }
 
 
@@ -91,6 +62,12 @@ public class CertificateGeneratorService {
         certificateBuilderUtils.saveCertificateAndKeys(certificate, request.getAlias(), subject.getPrivateKey(), request.getType());
         Certificate certificateModel = new Certificate(certificate, issuer, request);
         certificateRepository.save(certificateModel);
+        Runnable task1 = () -> makeCertificateValid(certificateModel);
+        Runnable task2 = () -> makeCertificateInvalid(certificateModel);
+        Instant startDate = certificateModel.getValidFrom().toInstant();
+        Instant endDate = certificateModel.getValidTo().toInstant();
+        taskScheduler.schedule(task1,startDate);
+        taskScheduler.schedule(task2, endDate);
         return certificateModel;
     }
 
@@ -106,8 +83,35 @@ public class CertificateGeneratorService {
             throw new InvalidDatesWithSigner("Given signer can't sign given dates");
         }
     }
-  
 
+    @SneakyThrows
+    private void makeCertificateInvalid(Certificate certificate){
+        if(certificate.getStatus() == CertificateStatus.VALID){
+            certificate.setStatus(CertificateStatus.INVALID);
+            certificateRepository.save(certificate);
+            LOG.log(Level.INFO, "Seting status to INVALID because Certificate" + certificate.getSerialNumber() + " has expired");
+        }
+    }
+
+    @SneakyThrows
+    private void makeCertificateValid(Certificate certificate){
+        if(certificate.getStatus() == CertificateStatus.INVALID){
+            certificate.setStatus(CertificateStatus.VALID);
+            certificateRepository.save(certificate);
+            LOG.log(Level.INFO, "Seting status to VALID - Certificate" + certificate.getSerialNumber());
+        }
+    }
+  
+    @PostConstruct
+    public void onStartUp(){
+        List<Certificate> certificates = certificateRepository.findAll();
+        for (Certificate certificate: certificates) {
+            if(DateUtils.isSameDay(certificate.getValidFrom(), new Date()) || certificate.getValidFrom().before(new Date()))
+                makeCertificateValid(certificate);
+            if(DateUtils.isSameDay(certificate.getValidTo(), new Date()) || certificate.getValidTo().before(new Date()))
+                makeCertificateInvalid(certificate);
+        }
+    }
     
 
 

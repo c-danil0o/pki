@@ -62,7 +62,7 @@ public class Certificate {
         this.validTo = x509Certificate.getNotAfter();
         this.validFrom = x509Certificate.getNotBefore();
         this.type = request.getType();
-        this.status = CertificateStatus.VALID;
+        this.status = CertificateStatus.INVALID;
         this.signatureAlgorithm = x509Certificate.getSigAlgName();
         this.alias = request.getAlias();
         this.extensions = request.getExtensions();
