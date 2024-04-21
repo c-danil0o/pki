@@ -107,7 +107,7 @@ public class CertificateBuilderUtils {
 
     public X500Name getRootIssuer() {
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-        builder.addRDN(BCStyle.CN, "Certifikey Co");
+        builder.addRDN(BCStyle.CN, "Certifikey_Co");
         builder.addRDN(BCStyle.SURNAME, "Co");
         builder.addRDN(BCStyle.GIVENNAME, "Certifikey");
         builder.addRDN(BCStyle.O, "tim12");
