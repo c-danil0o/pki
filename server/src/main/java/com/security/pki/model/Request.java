@@ -33,6 +33,9 @@ public class Request {
     private String signerAlias;
     @Column
     @Temporal(TemporalType.DATE)
+    private Date validFrom;
+    @Column
+    @Temporal(TemporalType.DATE)
     private Date validTo;
     @Column(columnDefinition="text")
     private String publicKey;

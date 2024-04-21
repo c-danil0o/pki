@@ -1,5 +1,8 @@
 package com.security.pki.service;
 
+import com.security.pki.exceptions.InvalidDatesWithSigner;
+import com.security.pki.exceptions.InvalidSignerException;
+import com.security.pki.exceptions.SignerNotFoundException;
 import com.security.pki.model.*;
 import com.security.pki.model.Certificate;
 import com.security.pki.model.certificateData.Issuer;
@@ -9,6 +12,7 @@ import com.security.pki.repository.KeyStoreRepository;
 import com.security.pki.repository.PrivateRepository;
 import com.security.pki.util.CertificateBuilderUtils;
 import com.security.pki.util.ExtensionsUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -69,12 +73,16 @@ public class CertificateGeneratorService {
 
 
     public Certificate get(Request request) {
+        if (request.getType()!=CertificateType.ROOT)
+            validateRequest(request);
         Subject subject = certificateBuilderUtils.generateSubject(request);
         Issuer issuer = certificateBuilderUtils.generateIssuer(request.getSignerAlias(), subject.getPrivateKey(), request.getType());
+        if (request.getValidFrom()==null){
+            request.setValidFrom(new Date());
+        }
         X509v3CertificateBuilder builder = certificateBuilderUtils.configureCertificateBuilder(subject.getX500Name(),
-                issuer.getX500Name(), new Date(), request.getValidTo(),
+                issuer.getX500Name(), request.getValidFrom(), request.getValidTo(),
                 String.valueOf(System.currentTimeMillis()), subject.getPublicKey());
-        // dodati ekstenzije
 
         certificateBuilderUtils.addExtensions(builder, request.getExtensions(), subject.getPublicKey(), issuer.getCertificate() != null ? issuer.getCertificate().getPublicKey(): null);
         X509Certificate certificate = certificateBuilderUtils.signCertificate(builder, issuer.getPrivateKey());
@@ -86,7 +94,18 @@ public class CertificateGeneratorService {
         return certificateModel;
     }
 
-
+    private void validateRequest(Request request){
+        Certificate signer = certificateRepository.findCertificateByAlias(request.getSignerAlias());
+        if (signer == null){
+            throw new SignerNotFoundException("Given signer doesnt exist");
+        }
+        if (signer.getStatus() == CertificateStatus.INVALID || signer.getStatus() == CertificateStatus.REVOKED){
+            throw new InvalidSignerException("Given signer is " + signer.getStatus().toString());
+        }
+        if (request.getValidFrom().before(signer.getValidFrom()) || request.getValidTo().after(signer.getValidTo()) || request.getValidFrom().after(request.getValidTo())){
+            throw new InvalidDatesWithSigner("Given signer can't sign given dates");
+        }
+    }
   
 
     

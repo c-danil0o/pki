@@ -94,7 +94,6 @@ public class CertificateBuilderUtils {
                     privateRepository.getPassword("keystore"));
             issuerPrivateKey = privateRepository.getKey(alias);
 
-
             X509Certificate certificate = (X509Certificate) issuerCertificate;
             try {
                 issuerName = new JcaX509CertificateHolder(certificate).getSubject();
