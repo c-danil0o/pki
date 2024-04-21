@@ -12,6 +12,7 @@ import org.bouncycastle.operator.ContentSigner;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.util.Objects;
 
 public class ExtensionsUtils {
 
@@ -22,10 +23,12 @@ public class ExtensionsUtils {
                     addBasicConstraintsExtension(builder, value);
                     break;
                 case "subjectKeyIdentifier":
-                    addSubjectKeyIdentifierExtension(builder, subjectPublicKey);
+                    if (value.equals("true"))
+                        addSubjectKeyIdentifierExtension(builder, subjectPublicKey);
                     break;
                 case "authorityKeyIdentifier":
-                    addAuthorityKeyIdentifierExtension(builder, issuerPublicKey);
+                    if (Objects.equals(value, "true"))
+                        addAuthorityKeyIdentifierExtension(builder, issuerPublicKey);
                     break;
                 case "keyUsage":
                     addKeyUsageExtensions(builder, value);

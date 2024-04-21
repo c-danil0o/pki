@@ -8,4 +8,6 @@ import java.util.List;
 public interface CertificateRepository extends JpaRepository<Certificate, String> {
     Certificate findCertificateBySerialNumber(String serialNumber);
     List<Certificate> findCertificateByIssuerSerialNumber(String serialNumber);
+
+    Certificate findCertificateByAlias(String alias);
 }

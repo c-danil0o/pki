@@ -11,7 +11,18 @@ export class AuthService {
   constructor() { }
 
 
+  refresh(){
+    if (localStorage.getItem("user") != null)
+      this.user$.next("admin")
+  }
   setUser(user: string): void{
+    localStorage.setItem("user", "admin")
     this.user$.next(user)
+  }
+
+
+  logout(){
+    localStorage.removeItem("user");
+    this.user$.next("")
   }
 }

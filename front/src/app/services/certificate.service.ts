@@ -4,6 +4,7 @@ import {environment} from "../../env";
 import {CertificateNode} from "../models/CertificateNode";
 import {Observable} from "rxjs";
 import {Certificate} from "../models/certificate";
+import {Request} from "../models/Request";
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +24,14 @@ export class CertificateService {
 
   getAllCertificateNodes(): Observable<CertificateNode[]>{
     return this.httpClient.get<CertificateNode[]>(environment.api + "certificate/all")
+  }
+
+
+  generateNewCertificate(request: Request):Observable<Certificate>{
+    return this.httpClient.post<Certificate>(environment.api + "generate/get",request );
+  }
+
+  deleteCertificate(serialNumber: string){
+    return this.httpClient.delete(environment.api + "certificate/" + serialNumber);
   }
 }

@@ -9,6 +9,7 @@ export interface CertificateNode extends TreeItem{
   subjectEmail?: string;
   type?: string;
   status?: string;
+  validTo?: Date;
 
   key?: string;
   label?: string;

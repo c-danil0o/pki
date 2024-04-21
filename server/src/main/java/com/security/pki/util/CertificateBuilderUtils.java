@@ -68,7 +68,11 @@ public class CertificateBuilderUtils {
         builder.addRDN(BCStyle.O, request.getOrganisation());
         builder.addRDN(BCStyle.C, request.getCountryCode());
         builder.addRDN(BCStyle.E, request.getEmail());
-        builder.addRDN(BCStyle.UID, request.getAccountId().toString());
+        if (request.getAccountId() == null){
+            builder.addRDN(BCStyle.UID, UUID.randomUUID().toString());
+        }else{
+            builder.addRDN(BCStyle.UID, request.getAccountId().toString());
+        }
         Subject subject = new Subject(builder.build());
         if (request.getType() == CertificateType.ROOT || request.getPublicKey() == null) {
             KeyPair keyPair = generateKeyPair();
@@ -93,7 +97,6 @@ public class CertificateBuilderUtils {
             java.security.cert.Certificate issuerCertificate = keyStoreRepository.readCertificate("keystore", alias,
                     privateRepository.getPassword("keystore"));
             issuerPrivateKey = privateRepository.getKey(alias);
-
 
             X509Certificate certificate = (X509Certificate) issuerCertificate;
             try {

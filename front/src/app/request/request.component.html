@@ -1,0 +1,34 @@
+<p-card header="Request" styleClass="requestCard" [style]="{ width: '90%', margin: '20px' }">
+
+
+  <p-badge [value]="request.type" class="certificate-badge"></p-badge>
+  <div class="certificateInfo">
+    <span>Issuer name:</span>
+    <span class="data">{{ request.signerAlias }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Subject name:</span>
+    <span class="data">{{ request.firstName + " "+ request.lastName }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Subject email:</span>
+    <span class="data">{{ request.email }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Valid from:</span>
+    <span class="data">{{ request.validFrom | date : 'dd.MM.yyyy' }}</span>
+  </div>
+
+  <div class="certificateInfo">
+    <span>Valid to:</span>
+    <span class="data">{{ request.validTo | date : 'dd.MM.yyyy' }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Extensions:</span>
+  </div>
+  <div class="extensions">
+    <div [innerHTML]="syntaxHighlight(JSON.stringify(request.extensions, null,  4))"></div>
+  </div>
+  <ng-template pTemplate="footer">
+  </ng-template>
+</p-card>

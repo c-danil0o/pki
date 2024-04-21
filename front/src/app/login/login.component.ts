@@ -31,8 +31,9 @@ export class LoginComponent {
   }
   login(): void{
     if (this.email == "admin" && this.password == "admin"){
-      this.router.navigate(['/certificates'])
+      localStorage.setItem('user', 'admin');
       this.authService.setUser("admin")
+      this.router.navigate(['/certificates'])
     }
   }
 }

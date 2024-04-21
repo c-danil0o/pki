@@ -27,21 +27,6 @@ public class CertificateGeneratorController {
         return (ResponseEntity.ok(this.certificateGeneratorService.get(request)));
     }
 
-    @PostMapping(consumes = "application/json", path = "/request")
-    public ResponseEntity<Boolean> requestCertificate(@RequestBody Request request) {
-        boolean result = certificateRequestService.SaveRequest(request);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
 
-    @GetMapping(path = "/accept")
-    public ResponseEntity<Certificate> acceptRequest(@RequestParam Long requestId){
-        Request request = certificateRequestService.findById(requestId);
-        if (request!=null){
-            Certificate certificate = this.certificateGeneratorService.get(request);
-            this.certificateRequestService.deleteById(requestId);
-            return (ResponseEntity.ok(certificate));
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
 }
