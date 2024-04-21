@@ -8,6 +8,8 @@ import {RequestComponent} from "../request/request.component";
 import {Request} from "../models/Request";
 import {RequestService} from "../services/request.service";
 import {MessageService} from "primeng/api";
+import {AuthService} from "../services/auth.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-requests',
@@ -24,10 +26,14 @@ import {MessageService} from "primeng/api";
   styleUrl: './requests.component.css'
 })
 export class RequestsComponent implements OnInit{
-  constructor(private requestService: RequestService, private messageService: MessageService) {
+  constructor(private router: Router, private requestService: RequestService, private messageService: MessageService, private authService: AuthService) {
 
   }
   ngOnInit(): void {
+
+    this.authService.userState.subscribe({
+      next: value => {if (value == "") this.router.navigate(['/'])}
+    })
     this.refreshTable();
   }
   refreshTable(){

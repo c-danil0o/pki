@@ -21,6 +21,7 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.authService.refresh();
     this.authService.userState.subscribe((result: string) => {
       this.loggedIn = result != ""
     })
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit{
   }
 
   logout() {
-
+    this.authService.logout();
+    this.router.navigate(["/"])
   }
 }
