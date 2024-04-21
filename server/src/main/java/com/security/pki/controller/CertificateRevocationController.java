@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "certificate")
+@RequestMapping(value = "/certificate")
 public class CertificateRevocationController {
     private final CertificateRevocationService revocationService;
 

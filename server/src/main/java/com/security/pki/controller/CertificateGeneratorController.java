@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "generate")
+@RequestMapping(value = "/generate")
 public class CertificateGeneratorController {
     private final CertificateGeneratorService certificateGeneratorService;
     private final CertificateRequestService certificateRequestService;
@@ -22,7 +22,6 @@ public class CertificateGeneratorController {
         this.certificateRequestService = certificateRequestService;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(consumes = "application/json", path = "/get")
     public ResponseEntity<Certificate> generateCertificate(@RequestBody Request request) {
         return (ResponseEntity.ok(this.certificateGeneratorService.get(request)));
