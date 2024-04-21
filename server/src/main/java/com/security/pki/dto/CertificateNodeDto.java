@@ -3,6 +3,8 @@ package com.security.pki.dto;
 import com.security.pki.model.Certificate;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class CertificateNodeDto {
     private String id;
@@ -12,6 +14,7 @@ public class CertificateNodeDto {
     private String subjectEmail;
     private String type;
     private String status;
+    private Date validTo;
     
     
     public CertificateNodeDto(Certificate certificate)
@@ -23,5 +26,6 @@ public class CertificateNodeDto {
         this.subjectEmail = certificate.getSubjectEmail();
         this.type = certificate.getType().toString();
         this.status = certificate.getStatus().toString();
+        this.validTo = certificate.getValidTo();
     }
 }
