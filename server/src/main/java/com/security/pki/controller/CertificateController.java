@@ -18,13 +18,12 @@ public class CertificateController {
         this.certificateService = certificateService;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all")
     public ResponseEntity<List<CertificateNodeDto>> getAllCertificateNodes(){
        return ResponseEntity.ok(this.certificateService.getAllCertificateNodes());
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @GetMapping("/{serialNumber}")
     public ResponseEntity<CertificateDto> getBySerialNumber(@PathVariable String serialNumber){
         return ResponseEntity.ok(this.certificateService.getBySerialNumber(serialNumber));
