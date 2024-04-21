@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/generate")
+@RequestMapping(value = "generate")
 public class CertificateGeneratorController {
     private final CertificateGeneratorService certificateGeneratorService;
     private final CertificateRequestService certificateRequestService;
