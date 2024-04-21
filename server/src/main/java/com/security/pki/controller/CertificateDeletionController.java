@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "certificate")
+@RequestMapping(value = "/certificate")
 public class CertificateDeletionController {
     private final CertificateDeletionService certificateDeletionService;
 
@@ -14,7 +14,6 @@ public class CertificateDeletionController {
         this.certificateDeletionService = certificateDeletionService;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping(value = "/{serialNumber}")
     public ResponseEntity<Void> deleteCertificate(@PathVariable String serialNumber){
         certificateDeletionService.deleteCertificate(serialNumber);
