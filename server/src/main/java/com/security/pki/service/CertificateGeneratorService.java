@@ -1,5 +1,6 @@
 package com.security.pki.service;
 
+import com.security.pki.exceptions.AliasAlreadyExistsException;
 import com.security.pki.exceptions.InvalidDatesWithSigner;
 import com.security.pki.exceptions.InvalidSignerException;
 import com.security.pki.exceptions.SignerNotFoundException;
@@ -72,6 +73,9 @@ public class CertificateGeneratorService {
     }
 
     private void validateRequest(Request request){
+        if (certificateRepository.findCertificateByAlias(request.getAlias()) != null){
+            throw new AliasAlreadyExistsException("Given alias already exists");
+        }
         Certificate signer = certificateRepository.findCertificateByAlias(request.getSignerAlias());
         if (signer == null){
             throw new SignerNotFoundException("Given signer doesnt exist");
