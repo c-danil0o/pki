@@ -35,4 +35,8 @@ export class AppComponent implements OnInit{
       '/requests'
     ])
   }
+
+  logout() {
+
+  }
 }
