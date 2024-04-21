@@ -4,6 +4,7 @@
 <div class="actions">
   <p-button type="button" label="Add" (onClick)="addCertificate()"></p-button>
   <p-button type="button" label="Remove" severity="secondary" (onClick)="removeCertificate()"></p-button>
+  <p-button type="button" label="Add new root" severity="help" (onClick)="addRootCertificate()"></p-button>
 </div>
 <div class="certificates-container">
 
@@ -33,6 +34,7 @@
     </div>
   </ng-template>
   <div class="modal-container">
+    @if (!rootCertificate){
     <span class="sub-header">Issuer</span>
     <div class="group">
       <div class="data-entry">
@@ -44,6 +46,8 @@
         <span class="data-value">{{ selectedCertificate?.id }}</span>
       </div>
     </div>
+
+    }
 
     <span class="sub-header">Subject</span>
     <div class="group">
@@ -69,7 +73,7 @@
       </div>
       <div class="data-entry">
         <span class="data-key">Alias:</span>
-        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectAlias"/>
+        <input class="input-field" [disabled]="subjectAliasDisabled"  type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectAlias"/>
       </div>
     </div>
     <span class="sub-header">Type</span>
@@ -128,6 +132,7 @@
 
       </div>
     </div>
+    @if (keysEnabled){
     <span class="sub-header">Keys</span>
     <div class="group">
       <div class="data-entry center">
@@ -151,6 +156,8 @@
         <p-button icon="pi pi-check" severity="secondary" (click)="generateKeyPair()" label="Generate"></p-button>
       }
     </div>
+
+    }
   </div>
   <ng-template pTemplate="footer">
     <p-button icon="pi pi-check" (click)="generateNewCertificate()" label="Ok"></p-button>

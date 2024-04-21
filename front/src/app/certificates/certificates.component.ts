@@ -103,29 +103,50 @@ export class CertificatesComponent implements OnInit {
 
   addCertificate() {
     if (this.selectedCertificate != null && this.selectedCertificate.type != "END") {
+      this.signerAlias = this.selectedCertificate.alias || "";
+      this.addNewCertificateFormVisible = true;
+      this.certificateTypes = [{name: "End entity", code: "END"}, {
+        name: "End entity(HTTPS)",
+        code: "END"
+      }, {name: "End entity(DP)", code: "END"}, {
+        name: "Intermediate",
+        code: "INTERMEDIATE"
+      }];
+    }
+  }
+  addRootCertificate(){
+    if (this.certificates.length == 0){
+      // dodati toast
+      this.certificateTypes = [{name: "Self-signed", code: "ROOT"}]
+      this.subjectAlias = "root";
+      this.signerAlias = "root";
+      this.subjectAliasDisabled = true;
+      this.rootCertificate = true;
       this.addNewCertificateFormVisible = true;
     }
   }
 
   removeCertificate() {
-
+    if (this.selectedCertificate != null){
+      this.certificateService.deleteCertificate(this.selectedCertificate.id || "").subscribe({
+        next: () => {
+          window.location.reload();
+        }
+      })
+    }
   }
 
   protected readonly Subject = Subject;
+  subjectAliasDisabled: boolean = false;
   subjectFirstname: string = "";
   subjectLastname: string = "";
   subjectEmail: string = "";
   subjectOrganisation: string = "";
   subjectCountryCode: string = "";
   subjectAlias: string = "";
+  signerAlias: string = "";
   certificateType: any;
-  certificateTypes: any = [{name: "End entity", code: "END"}, {
-    name: "End entity(HTTPS)",
-    code: "END"
-  }, {name: "End entity(DP)", code: "END"}, {
-    name: "Intermediate",
-    code: "INTERMEDIATE"
-  }];
+  certificateTypes: any  ;
   validFrom: Date | null = null;
   validTo: Date | null = null;
   extensions: any = {
@@ -162,6 +183,8 @@ export class CertificatesComponent implements OnInit {
   keyInsertSelected: boolean = false;
   keyGenerateSelected: boolean = false;
   privateKey: string = "";
+  keysEnabled: boolean = false;
+  rootCertificate: boolean = false;
 
 
 
@@ -186,10 +209,12 @@ export class CertificatesComponent implements OnInit {
       case "End entity":
         this.extensions.subjectKeyIdentifier = true;
         this.extensions.authorityKeyIdentifier = true;
+        this.keysEnabled = true;
         break;
       case "End entity(HTTPS)":
         this.extensions.subjectKeyIdentifier = true;
         this.extensions.authorityKeyIdentifier = true;
+        this.keysEnabled = true;
         break;
       case "End entity(DP)":
         this.extensions.subjectKeyIdentifier = true;
@@ -197,11 +222,21 @@ export class CertificatesComponent implements OnInit {
         this.keyUsages.digitalSignatureExtension = true;
         this.keyUsages.keyEnciphermentExtension = true;
         this.keyUsages.dataEnciphermentExtension = true;
+        this.keysEnabled = true;
         break;
       case "Intermediate":
         this.extensions.subjectKeyIdentifier = true;
         this.extensions.basicConstraints = true;
         this.extensions.authorityKeyIdentifier = true;
+        this.keysEnabled = false;
+        this.publicKey = "";
+        break;
+      case  "Self-signed":
+        this.extensions.subjectKeyIdentifier = true;
+        this.extensions.basicConstraints = true;
+        this.extensions.authorityKeyIdentifier = true;
+        this.keysEnabled = false;
+        this.publicKey = "";
         break;
     }
   }
@@ -299,15 +334,7 @@ export class CertificatesComponent implements OnInit {
 
     if (this.subjectFirstname != "" && this.subjectLastname != "" && this.subjectEmail != "" &&
       this.subjectAlias != "" && this.subjectCountryCode != "" && this.subjectOrganisation != "") {
-      console.log("123")
-      console.log(this.certificateType)
-      console.log(this.validFrom)
-      console.log(this.validTo)
-      console.log(this.publicKey)
-      console.log(this.validFrom?.getTime())
-      console.log(this.validTo?.getTime());
-      console.log(new Date().getTime())
-      if (this.certificateType != null && this.validFrom != null && this.validTo != null && this.validFrom.getTime() < this.validTo.getTime() && this.validFrom.getTime() > new Date().getTime() && this.publicKey != "") {
+      if (this.certificateType != null && this.validFrom != null && this.validTo != null && this.validFrom.getTime() < this.validTo.getTime() && this.validFrom.getTime()+ 3600000 >= new Date().getTime()) {
         let request: Request = {
           firstName: this.subjectFirstname,
           lastName: this.subjectLastname,
@@ -315,12 +342,12 @@ export class CertificatesComponent implements OnInit {
           organisation: this.subjectOrganisation,
           countryCode: this.subjectCountryCode,
           alias: this.subjectAlias,
-          signerAlias: this.selectedCertificate?.alias || "",
+          signerAlias: this.signerAlias,
           validTo: this.validTo,
           validFrom: this.validFrom,
           type: this.certificateType.code,
           extensions: this.packExtensions(),
-          publicKey: this.publicKey,
+          publicKey: this.publicKey === "" ? undefined : this.publicKey,
         }
 
         console.log(request)
