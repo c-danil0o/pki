@@ -56,8 +56,8 @@
         "serve": {
           "options": {
             "ssl": true,
-            "sslKey": "keystore/booking.pem",
-            "sslCert": "keystore/booking.cer"
+            "sslKey": "keystore/pkissl.pem",
+            "sslCert": "keystore/pkissl.crt"
           },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
