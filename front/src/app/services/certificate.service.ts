@@ -30,4 +30,8 @@ export class CertificateService {
   generateNewCertificate(request: Request):Observable<Certificate>{
     return this.httpClient.post<Certificate>(environment.api + "generate/get",request );
   }
+
+  deleteCertificate(serialNumber: string){
+    return this.httpClient.delete(environment.api + "certificate/" + serialNumber);
+  }
 }

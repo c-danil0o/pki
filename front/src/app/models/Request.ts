@@ -8,7 +8,7 @@ export interface Request{
   signerAlias: string;
   validTo: Date;
   validFrom: Date;
-  publicKey: string;
+  publicKey?: string;
   type: string;
   extensions: object;
 }
