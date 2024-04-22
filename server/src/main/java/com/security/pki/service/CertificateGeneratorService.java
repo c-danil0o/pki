@@ -1,9 +1,6 @@
 package com.security.pki.service;
 
-import com.security.pki.exceptions.AliasAlreadyExistsException;
-import com.security.pki.exceptions.InvalidDatesWithSigner;
-import com.security.pki.exceptions.InvalidSignerException;
-import com.security.pki.exceptions.SignerNotFoundException;
+import com.security.pki.exceptions.*;
 import com.security.pki.model.*;
 import com.security.pki.model.Certificate;
 import com.security.pki.model.certificateData.Issuer;
@@ -85,6 +82,18 @@ public class CertificateGeneratorService {
         }
         if (request.getValidFrom().before(signer.getValidFrom()) || request.getValidTo().after(signer.getValidTo()) || request.getValidFrom().after(request.getValidTo())){
             throw new InvalidDatesWithSigner("Given signer can't sign given dates");
+        }
+        for(String key : request.getExtensions().keySet()){
+            if (!signer.getExtensions().containsKey(key)){
+                throw new SignerHasLessExtensionsException("Signer has less extensions then subject");
+            }
+        }
+        Map<String, String> keyUsageMap = request.getExtensions();
+        Map<String,String> signerKeyUsageMap = signer.getExtensions();
+        for (String c : keyUsageMap.get("keyUsage").split(",")) {
+            if (!signerKeyUsageMap.get("keyUsages").contains(c)){
+                throw new SignerHasLessExtensionsException("Signer has less extensions then subject");
+            }
         }
     }
 

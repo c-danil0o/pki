@@ -58,4 +58,10 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<ApiError>(message, HttpStatus.I_AM_A_TEAPOT);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(SignerHasLessExtensionsException.class)
+    public ResponseEntity<ApiError> signerHasLessExtensionsException(SignerHasLessExtensionsException ex, HttpServletRequest request) {
+        ApiError message = new ApiError(HttpStatus.I_AM_A_TEAPOT.value(), ex.getMessage(), request.getRequestURI());
+        return new ResponseEntity<ApiError>(message, HttpStatus.I_AM_A_TEAPOT);
+    }
+
 }
