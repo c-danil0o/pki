@@ -1,5 +1,6 @@
 package com.security.pki.service;
 
+import com.security.pki.exceptions.AliasAlreadyExistsException;
 import com.security.pki.model.Request;
 import com.security.pki.repository.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class CertificateRequestService {
     }
 
     public boolean SaveRequest(Request request){
+        if (requestRepository.findRequestByAlias(request.getAlias())!=null){
+            throw new AliasAlreadyExistsException("You already made request");
+        }
         try {
             this.requestRepository.save(request);
             return true;
