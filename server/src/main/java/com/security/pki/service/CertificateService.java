@@ -3,6 +3,7 @@ package com.security.pki.service;
 import com.security.pki.dto.CertificateDto;
 import com.security.pki.dto.CertificateNodeDto;
 import com.security.pki.exceptions.CertificateNotApprovedException;
+import com.security.pki.exceptions.RequestNotFoundException;
 import com.security.pki.model.Certificate;
 import com.security.pki.model.CertificateStatus;
 import com.security.pki.model.CertificateType;
@@ -71,7 +72,11 @@ public class CertificateService {
 
     public String getCertificatePem(String alias){
         if(certificateRepository.findCertificateByAlias(alias)==null){
-            throw new CertificateNotApprovedException("Your certificate is not approved yet");
+            if (requestRepository.findRequestByAlias(alias)!=null)
+                throw new CertificateNotApprovedException("Your certificate is not approved yet");
+            else {
+                throw new RequestNotFoundException("There is no request with your alias");
+            }
         }
 
         java.security.cert.Certificate certificate = keyStoreRepository.readCertificate("keystore", alias,
