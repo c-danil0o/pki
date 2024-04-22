@@ -248,6 +248,8 @@ export class CertificatesComponent implements OnInit {
       case "End entity(HTTPS)":
         this.extensions.subjectKeyIdentifier = true;
         this.extensions.authorityKeyIdentifier = true;
+        this.keyUsages.digitalSignatureExtension = true;
+        this.keyUsages.keyEnciphermentExtension = true;
         this.keysEnabled = true;
         break;
       case "End entity(DP)":
@@ -268,7 +270,6 @@ export class CertificatesComponent implements OnInit {
       case  "Self-signed":
         this.extensions.subjectKeyIdentifier = true;
         this.extensions.basicConstraints = true;
-        this.extensions.authorityKeyIdentifier = true;
         this.keysEnabled = false;
         this.publicKey = "";
         break;
