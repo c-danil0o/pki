@@ -2,13 +2,14 @@ package com.security.pki.service;
 
 import com.security.pki.dto.CertificateDto;
 import com.security.pki.dto.CertificateNodeDto;
+import com.security.pki.exceptions.CertificateNotApprovedException;
 import com.security.pki.model.Certificate;
 import com.security.pki.model.CertificateStatus;
 import com.security.pki.model.CertificateType;
 import com.security.pki.repository.CertificateRepository;
 import com.security.pki.repository.KeyStoreRepository;
 import com.security.pki.repository.PrivateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.security.pki.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -24,12 +25,14 @@ public class CertificateService {
     private final CertificateRepository certificateRepository;
     private final KeyStoreRepository keyStoreRepository;
     private final PrivateRepository privateRepository;
+    private final RequestRepository requestRepository;
 
     public CertificateService(CertificateRepository certificateRepository, KeyStoreRepository keyStoreRepository,
-                              PrivateRepository privateRepository) {
+                              PrivateRepository privateRepository, RequestRepository requestRepository) {
         this.certificateRepository = certificateRepository;
         this.keyStoreRepository = keyStoreRepository;
         this.privateRepository = privateRepository;
+        this.requestRepository = requestRepository;
     }
 
     public List<CertificateNodeDto> getAllCertificateNodes() {
@@ -67,6 +70,10 @@ public class CertificateService {
     }
 
     public String getCertificatePem(String alias){
+        if(certificateRepository.findCertificateByAlias(alias)==null){
+            throw new CertificateNotApprovedException("Your certificate is not approved yet");
+        }
+
         java.security.cert.Certificate certificate = keyStoreRepository.readCertificate("keystore", alias,
                 privateRepository.getPassword("keystore"));
 

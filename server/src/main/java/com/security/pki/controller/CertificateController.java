@@ -44,7 +44,7 @@ public class CertificateController {
         return ResponseEntity.ok(this.certificateService.getByAlias(alias));
     }
 
-    @GetMapping("/PEM/{alias}")
+    @GetMapping("/download/{alias}")
     public ResponseEntity<String> getPemByAlias(@PathVariable String alias){
         return ResponseEntity.ok(this.certificateService.getCertificatePem(alias));
     }
