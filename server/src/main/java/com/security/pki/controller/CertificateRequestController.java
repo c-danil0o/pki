@@ -31,14 +31,12 @@ public class CertificateRequestController {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all")
     public ResponseEntity<List<Request>> getAll(){
         return ResponseEntity.ok(this.certificateRequestService.getAll());
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(path = "/accept")
     public ResponseEntity<Certificate> acceptRequest(@RequestParam Long requestId){
         Request request = certificateRequestService.findById(requestId);
