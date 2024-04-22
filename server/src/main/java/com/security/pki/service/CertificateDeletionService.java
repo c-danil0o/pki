@@ -32,6 +32,7 @@ public class CertificateDeletionService {
             keyStorePassword = privateRepository.getPassword("keystore");
             keyStoreRepository.loadKeyStore("keystore", keyStorePassword.toCharArray());
             keyStoreRepository.deleteCertificate(certificate.getAlias());
+            privateRepository.deleteKey(certificate.getAlias());
             deleteAllDescendents(serialNumber);
         }else
             throw new EntityNotFoundException("Element with given ID doesn't exist!");
@@ -43,6 +44,7 @@ public class CertificateDeletionService {
             String serialNumber = certificate.getSerialNumber();
             certificateRepository.deleteById(serialNumber);
             keyStoreRepository.deleteCertificate(certificate.getAlias());
+            privateRepository.deleteKey(certificate.getAlias());
             if (!certificate.getType().equals(CertificateType.END))
                 deleteAllDescendents(serialNumber);
         }
