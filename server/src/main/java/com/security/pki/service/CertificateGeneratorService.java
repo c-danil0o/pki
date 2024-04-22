@@ -69,30 +69,39 @@ public class CertificateGeneratorService {
         return certificateModel;
     }
 
-    private void validateRequest(Request request){
-        if (certificateRepository.findCertificateByAlias(request.getAlias()) != null){
+    private void validateRequest(Request request) {
+        if (certificateRepository.findCertificateByAlias(request.getAlias()) != null) {
             throw new AliasAlreadyExistsException("Given alias already exists");
         }
         Certificate signer = certificateRepository.findCertificateByAlias(request.getSignerAlias());
-        if (signer == null){
+        if (signer == null) {
             throw new SignerNotFoundException("Given signer doesnt exist");
         }
-        if (signer.getStatus() == CertificateStatus.INVALID || signer.getStatus() == CertificateStatus.REVOKED){
+        if (signer.getStatus() == CertificateStatus.INVALID || signer.getStatus() == CertificateStatus.REVOKED) {
             throw new InvalidSignerException("Given signer is " + signer.getStatus().toString());
         }
-        if (request.getValidFrom().before(signer.getValidFrom()) || request.getValidTo().after(signer.getValidTo()) || request.getValidFrom().after(request.getValidTo())){
+        if (request.getValidFrom().before(signer.getValidFrom()) || request.getValidTo().after(signer.getValidTo()) || request.getValidFrom().after(request.getValidTo())) {
             throw new InvalidDatesWithSigner("Given signer can't sign given dates");
         }
-        for(String key : request.getExtensions().keySet()){
-            if (!signer.getExtensions().containsKey(key)){
+        for (String key : request.getExtensions().keySet()) {
+            if (!signer.getExtensions().containsKey(key)) {
                 throw new SignerHasLessExtensionsException("Signer has less extensions then subject");
             }
         }
-        Map<String, String> keyUsageMap = request.getExtensions();
-        Map<String,String> signerKeyUsageMap = signer.getExtensions();
-        for (String c : keyUsageMap.get("keyUsage").split(",")) {
-            if (!signerKeyUsageMap.get("keyUsages").contains(c)){
-                throw new SignerHasLessExtensionsException("Signer has less extensions then subject");
+
+        String[] keyUsagesRequest = request.getExtensions().get("keyUsage").split(",");
+        String[] keyUsagesIssuer = signer.getExtensions().get("keyUsage").split(",");
+        boolean contains = false;
+        for (String c : keyUsagesRequest) {
+            contains = false;
+            for (String i : keyUsagesIssuer) {
+                if (c.trim().equals(i.trim())) {
+                    contains = true;
+                }
+
+            }
+            if (!contains) {
+                throw new SignerHasLessExtensionsException("Signer has less extensions then subject"); 
             }
         }
     }
