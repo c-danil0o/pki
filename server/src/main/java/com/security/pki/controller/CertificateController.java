@@ -2,6 +2,7 @@ package com.security.pki.controller;
 
 import com.security.pki.dto.CertificateDto;
 import com.security.pki.dto.CertificateNodeDto;
+import com.security.pki.dto.SignedCertificateDto;
 import com.security.pki.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class CertificateController {
     }
 
     @GetMapping("/download/{alias}")
-    public ResponseEntity<String> getPemByAlias(@PathVariable String alias){
+    public ResponseEntity<SignedCertificateDto> downloadCertificate(@PathVariable String alias){
         return ResponseEntity.ok(this.certificateService.getCertificatePem(alias));
     }
     
