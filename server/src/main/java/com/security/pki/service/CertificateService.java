@@ -100,7 +100,7 @@ public class CertificateService {
             outStream.write("\n-----END CERTIFICATE-----\n".getBytes());
             pemCertificate = outStream.toString();
             PrivateKey key = privateRepository.getKey("bookingCA");
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/NOPADDING");
             cipher.init(Cipher.ENCRYPT_MODE,key );
             
             SignedCertificateDto signedCertificateDto = new SignedCertificateDto();
