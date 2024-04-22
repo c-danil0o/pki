@@ -334,14 +334,14 @@ export class CertificatesComponent implements OnInit {
   }
 
   formatAsPemPrivate(str: string) {
-    var finalString = '-----BEGIN PRIVATE KEY-----\n';
+    var finalString = '-----BEGIN RSA PRIVATE KEY-----\n';
 
     while (str.length > 0) {
       finalString += str.substring(0, 64) + '\n';
       str = str.substring(64);
     }
 
-    finalString = finalString + "-----END PRIVATE KEY-----";
+    finalString = finalString + "-----END RSA PRIVATE KEY-----";
 
     return finalString;
   }

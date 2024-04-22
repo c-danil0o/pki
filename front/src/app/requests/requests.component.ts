@@ -30,7 +30,6 @@ export class RequestsComponent implements OnInit{
 
   }
   ngOnInit(): void {
-
     this.authService.userState.subscribe({
       next: value => {if (value == "") this.router.navigate(['/'])}
     })
@@ -48,7 +47,6 @@ export class RequestsComponent implements OnInit{
   selectedRequest: Request | null = null;
 
   approveRequest() {
-
     if (this.selectedRequest != null){
       this.requestService.approveRequest(this.selectedRequest.requestId || 0).subscribe({
         next: () => {
@@ -63,7 +61,6 @@ export class RequestsComponent implements OnInit{
         detail: 'No selected request!',
         life: 2000
       })
-
     }
   }
 
