@@ -172,6 +172,7 @@ export class CertificatesComponent implements OnInit {
 
   protected readonly Subject = Subject;
   subjectAliasDisabled: boolean = false;
+  authorityKeyIdentifierDisabled = false;
   subjectFirstname: string = "";
   subjectLastname: string = "";
   subjectEmail: string = "";
@@ -235,6 +236,7 @@ export class CertificatesComponent implements OnInit {
     this.keyUsages.crlSignExtension = false;
     this.keyUsages.encipherOnly = false;
     this.keyUsages.decipherOnly = false;
+    this.authorityKeyIdentifierDisabled = false;
   }
 
   typeChanged($event: DropdownChangeEvent) {
@@ -272,6 +274,7 @@ export class CertificatesComponent implements OnInit {
         this.extensions.basicConstraints = true;
         this.keysEnabled = false;
         this.publicKey = "";
+        this.authorityKeyIdentifierDisabled = true;
         break;
     }
   }
