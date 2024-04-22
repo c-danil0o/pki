@@ -2,13 +2,20 @@ package com.security.pki.service;
 
 import com.security.pki.dto.CertificateDto;
 import com.security.pki.dto.CertificateNodeDto;
+import com.security.pki.exceptions.CertificateNotApprovedException;
 import com.security.pki.model.Certificate;
 import com.security.pki.model.CertificateStatus;
 import com.security.pki.model.CertificateType;
 import com.security.pki.repository.CertificateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.security.pki.repository.KeyStoreRepository;
+import com.security.pki.repository.PrivateRepository;
+import com.security.pki.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +23,16 @@ import java.util.Optional;
 @Service
 public class CertificateService {
     private final CertificateRepository certificateRepository;
+    private final KeyStoreRepository keyStoreRepository;
+    private final PrivateRepository privateRepository;
+    private final RequestRepository requestRepository;
 
-
-    public CertificateService(CertificateRepository certificateRepository) {
+    public CertificateService(CertificateRepository certificateRepository, KeyStoreRepository keyStoreRepository,
+                              PrivateRepository privateRepository, RequestRepository requestRepository) {
         this.certificateRepository = certificateRepository;
+        this.keyStoreRepository = keyStoreRepository;
+        this.privateRepository = privateRepository;
+        this.requestRepository = requestRepository;
     }
 
     public List<CertificateNodeDto> getAllCertificateNodes() {
@@ -54,6 +67,29 @@ public class CertificateService {
         }
         return isValid(certificate.get().getIssuerSerialNumber()) &&
                 certificate.get().getStatus() == CertificateStatus.VALID && today.before(certificate.get().getValidTo());
+    }
+
+    public String getCertificatePem(String alias){
+        if(certificateRepository.findCertificateByAlias(alias)==null){
+            throw new CertificateNotApprovedException("Your certificate is not approved yet");
         }
+
+        java.security.cert.Certificate certificate = keyStoreRepository.readCertificate("keystore", alias,
+                privateRepository.getPassword("keystore"));
+
+        String pemCertificate;
+        try {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            outStream.write("-----BEGIN CERTIFICATE-----\n".getBytes());
+            outStream.write(Base64.getEncoder().encode(certificate.getEncoded()));
+            outStream.write("\n-----END CERTIFICATE-----\n".getBytes());
+            pemCertificate = outStream.toString();
+            return pemCertificate;
+        } catch (CertificateEncodingException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
 
 }
