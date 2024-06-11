@@ -1,0 +1,46 @@
+<div class="header">
+  <span>Requests</span>
+</div>
+<div class="actions">
+  <p-button type="button" label="Approve" (onClick)="approveRequest()"></p-button>
+</div>
+<div class="certificates-container">
+
+  <p-splitter [style]="{  backgroundColor: 'black', border: '0px'}" [panelSizes]="[60, 40]">
+    <ng-template pTemplate>
+      <div class="col flex align-items-center justify-content-center panel">
+        <p-table [value]="csrRequests" [tableStyle]="{'min-width': '60rem' }" [rows]="20"
+                 [showCurrentPageReport]="true"
+                 [rowsPerPageOptions]="[20, 40, 60]"
+                 [paginator]="true"
+                 selectionMode="single"
+                 [loading]="loading"
+                 [(selection)]="selectedRequest"
+                 (onRowSelect)="onSelection($event)"
+                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pFrozenColumn="subjectEmail" style="width:50%">Subject email</th>
+              <th pFrozenColumn="type" style="width:50%">Type</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-request>
+            <tr [pSelectableRow]="request" >
+              <td>{{ request.email }}</td>
+              <td>{{ request.type }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </ng-template>
+    <ng-template pTemplate>
+      <div class="col flex align-items-center justify-content-center certificate-wrapper ">
+        @if (selectedRequest) {
+
+          <app-request [request]="selectedRequest"></app-request>
+        }
+      </div>
+    </ng-template>
+  </p-splitter>
+</div>

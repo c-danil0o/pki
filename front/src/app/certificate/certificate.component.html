@@ -1,0 +1,47 @@
+<p-card header="Certificate" styleClass="certificateCard" [style]="{ width: '90%', margin: '20px' }">
+
+
+  <p-badge [value]="certificate?.type" class="certificate-badge"></p-badge>
+  <div class="certificateInfo">
+    <span>Issuer name:</span>
+    <span class="data">{{ certificate?.issuerName }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Subject name:</span>
+    <span class="data">{{ certificate?.subjectName }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Subject email:</span>
+    <span class="data">{{ certificate?.subjectEmail }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Serial number:</span>
+    <span class="data">{{ certificate?.serialNumber }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Valid from:</span>
+    <span class="data">{{ certificate?.validFrom | date : 'dd.MM.yyyy' }}</span>
+  </div>
+
+  <div class="certificateInfo">
+    <span>Valid to:</span>
+    <span class="data">{{ certificate?.validTo | date : 'dd.MM.yyyy' }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Status:</span>
+    <span class="data">{{ certificate?.status }}</span>
+  </div>
+  <div class="certificateInfo">
+    <span>Signature algorithm:</span>
+    <span class="data">{{ certificate?.signatureAlgorithm }}</span>
+  </div>
+
+  <div class="certificateInfo">
+    <span>Extensions:</span>
+  </div>
+  <div class="extensions">
+    <div [innerHTML]="syntaxHighlight(JSON.stringify(certificate?.extensions, null,  4))"></div>
+  </div>
+  <ng-template pTemplate="footer">
+  </ng-template>
+</p-card>

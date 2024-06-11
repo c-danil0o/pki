@@ -1,0 +1,165 @@
+<div class="header">
+  <span>Certificates</span>
+</div>
+<div class="actions">
+  <p-button type="button" label="Add" (onClick)="addCertificate()"></p-button>
+  <p-button type="button" label="Remove" severity="secondary" (onClick)="removeCertificate()"></p-button>
+  <p-button type="button" label="Add new root" severity="help" (onClick)="addRootCertificate()"></p-button>
+</div>
+<div class="certificates-container">
+
+  <p-splitter [style]="{  backgroundColor: 'black', border: '0px'}" [panelSizes]="[60, 40]">
+    <ng-template pTemplate>
+      <div class="col flex align-items-center justify-content-center panel">
+        <p-tree [style]="{backgroundColor: 'black'}" [value]="certificates" class="w-full md:w-30rem"
+                selectionMode="single"
+                [(selection)]="selectedCertificate"></p-tree>
+      </div>
+    </ng-template>
+    <ng-template pTemplate>
+      <div class="col flex align-items-center justify-content-center certificate-wrapper ">
+        @if (selectedCertificate) {
+
+          <app-certificate [certificateAlias]="selectedCertificate.key"></app-certificate>
+        }
+      </div>
+    </ng-template>
+  </p-splitter>
+</div>
+<p-dialog header="Header" [(visible)]="addNewCertificateFormVisible" [modal]="true" [style]="{ width: '50rem' }"
+          [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+  <ng-template pTemplate="header">
+    <div class="header-modal">
+      <span>Issue new certificate</span>
+    </div>
+  </ng-template>
+  <div class="modal-container">
+    @if (!rootCertificate){
+    <span class="sub-header">Issuer</span>
+    <div class="group">
+      <div class="data-entry">
+        <span class="data-key">Issuer name:</span>
+        <span class="data-value">{{ selectedCertificate?.issuerName }}</span>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Issuer serial number:</span>
+        <span class="data-value">{{ selectedCertificate?.id }}</span>
+      </div>
+    </div>
+
+    }
+
+    <span class="sub-header">Subject</span>
+    <div class="group">
+      <div class="data-entry">
+        <span class="data-key">First name:</span>
+        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectFirstname"/>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Last name:</span>
+        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectLastname"/>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Email:</span>
+        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectEmail"/>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Organisation:</span>
+        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectOrganisation"/>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Country Code:</span>
+        <input class="input-field" type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectCountryCode"/>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Alias:</span>
+        <input class="input-field" [disabled]="subjectAliasDisabled"  type="text" [style]="{width:'60%'}" pInputText [(ngModel)]="subjectAlias"/>
+      </div>
+    </div>
+    <span class="sub-header">Type</span>
+
+    <div class="group">
+      <div class="data-entry">
+        <span class="data-key">Certificate Type:</span>
+        <p-dropdown class="input-field" (onChange)="typeChanged($event)" [style]="{width:'100%'}"
+                    [options]="certificateTypes" [(ngModel)]="certificateType" optionLabel="name"></p-dropdown>
+      </div>
+    </div>
+
+
+    <span class="sub-header">Dates</span>
+    <div class="group">
+      <div class="data-entry">
+        <span class="data-key">Valid from:</span>
+        <p-calendar class="input-field" [style]="{width:'100%'}" [(ngModel)]="validFrom"></p-calendar>
+      </div>
+      <div class="data-entry">
+        <span class="data-key">Valid to:</span>
+        <p-calendar class="input-field" [style]="{width:'100%'}" [(ngModel)]="validTo"></p-calendar>
+      </div>
+    </div>
+    <span class="sub-header">Extensions</span>
+
+    <div class="group">
+      <div class="key-usages">
+        <p-checkbox [(ngModel)]="extensions.basicConstraints" [binary]="true" label="Basic constraints"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="extensions.subjectKeyIdentifier" [binary]="true" label="Subject key identifier"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="extensions.authorityKeyIdentifier" [disabled]="authorityKeyIdentifierDisabled" [binary]="true" label="Authority key identifier"
+                    inputId="binary"></p-checkbox>
+      </div>
+      <span class="header2">Key usages:</span>
+      <div class="key-usages">
+        <p-checkbox [(ngModel)]="keyUsages.digitalSignatureExtension" [binary]="true" label="Digital signature"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.nonRepudiationExtension" [binary]="true" label="Non repudiation"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.keyEnciphermentExtension" [binary]="true" label="Key enchipherment"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.dataEnciphermentExtension" [binary]="true" label="Data enchipherment"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.keyAgreementExtension" [binary]="true" label="Key agreement"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.keyCertSignExtension" [binary]="true" label="Key cert sign"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.crlSignExtension" [binary]="true" label="cRl Sign"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.encipherOnly" [binary]="true" label="Encipher only"
+                    inputId="binary"></p-checkbox>
+        <p-checkbox [(ngModel)]="keyUsages.decipherOnly" [binary]="true" label="Decipher only"
+                    inputId="binary"></p-checkbox>
+
+      </div>
+    </div>
+    @if (keysEnabled){
+    <span class="sub-header">Keys</span>
+    <div class="group">
+      <div class="data-entry center">
+        <p-selectButton  [options]="keyOptions" [(ngModel)]="selectedKeyOption" (onChange)="keyOptionChanged($event)" optionLabel="label" optionValue="value"></p-selectButton>
+      </div>
+      @if (keyInsertSelected){
+        <div class="data-entry">
+          <textarea rows="10" cols="30" class="area" placeholder="Your public key" pInputTextarea [(ngModel)]="publicKey"></textarea>
+        </div>
+      }
+      @if (keyGenerateSelected){
+
+        <div class="data-entry">
+          <span class="data-key">Private key:</span>
+          <textarea rows="10" cols="30" class="area no-input" [disabled]="true" pInputTextarea [(ngModel)]="privateKey"></textarea>
+        </div>
+        <div class="data-entry">
+          <span class="data-key">Public key:</span>
+          <textarea rows="10" cols="30" class="area no-input" [disabled]="true"  pInputTextarea [(ngModel)]="publicKey"></textarea>
+        </div>
+        <p-button icon="pi pi-check" severity="secondary" (click)="generateKeyPair()" label="Generate"></p-button>
+      }
+    </div>
+
+    }
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="generateNewCertificate()" label="Ok"></p-button>
+  </ng-template>
+</p-dialog>
